@@ -9,7 +9,7 @@ var year = 0;
 
 //initiail texts and tags
 function init() {
-  for (let i = 0; i < 32; i++) {
+  for (var i = 0; i < 32; i++) {
     texts[i] = "";
     tags[i] = "";
   }
@@ -59,7 +59,7 @@ function fill_month() {
   var first_day = zeller(1, month, year);
 
   //fill in
-  for (let i = (1 + first_day); i < (first_day + total_day + 1); i++) {
+  for (var i = (1 + first_day); i < (first_day + total_day + 1); i++) {
     document.getElementById("a_" + i).innerHTML = (i - first_day) + "<br>";
   }
 }
@@ -167,17 +167,17 @@ function func_click() {
   var first_day = zeller(1, month, year);
 
   //set all = close
-  for (let i = 1; i <= 31; i++) {
+  for (var i = 1; i <= 31; i++) {
     $("#day_" + (i + first_day)).data("flag", "close");
   }
   //first_day = 3
-  for (let i = 1; i <= 31; i++) {
+  for (var i = 1; i <= 31; i++) {
     $("#day_" + (i + first_day)).click(function() {
       console.log("you click" + i);
       //open selected and close all others
       if ($("#day_" + (i + first_day)).data("flag") == "close") {
         //closed all and set flag to close
-        for (let j = 1; j <= 42; j++) {
+        for (var j = 1; j <= 42; j++) {
           closeDetail(j);
           $("#day_" + (j + first_day)).data("flag", "close");
         }
