@@ -1,42 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="calender.css">
-                <script src="calender.js" type="text/javascript"></script>
-		<title>TRY</title>
-	</head>
 
-	<body>
-		<script type="text/javascript">
-			// calender_create(c_month,c_year)
-			// add_event(c_year,c_month,c_date,tag,time,content)
-			/*
-			1.check if requested month exists,
-				if not: call calender_create,
-				if exist: execute add_event(c_date, tag, time, content)
-			2.check if requested date exits
-				if no : false
-			3.save tag into tagArr, content into contentsArr
-			
-			*/
-			calender_create(2,2017);
-			add_event(1, "tag1", "hello1111111111");
-			add_event(1, "tag2", "hello22222222");
-			add_event(3, "tag3", "hello3333333333");
-			add_event(14, "tag4", "hello444");
-			add_event(20, "tag5", "hello5555");
-			add_event(5, "tag6", "hello6");
-			add_event(6, "tag7", "hello7");
-			add_event(7, "tag8", "hello8");
-			add_event(8, "tag9", "hello9");
-			add_event(9, "tag10", "hello10");
-			add_event(2, "tag11", "hello11");
-			add_event(20, "tag12", "hello12");
-			add_event(28, "tag13", "hello13");
-			add_event(28, "tag14", "hello14");
-			add_event(4, "tag15", "hello15");
-		</script>
-	</body>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="calender.css">
+  <script src="calender.js" type="text/javascript"></script>
+  <title>TRY</title>
+</head>
+
+<body>
+</body>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+  // calender_create(c_month,c_year)
+  // add_event(c_year,c_month,c_date,tag,time,content)
+  /*
+  1.check if requested month exists,
+    if not: call calender_create,
+    if exist: execute add_event(c_date, tag, time, content)
+  2.check if requested date exits
+    if no : false
+  3.save tag into tagArr, content into contentsArr
+        
+  */
+  calender_create(2, 2017);
+  add_event(1, "tag1", "hello1111111111");
+  add_event(1, "tag2", "hello22222222");
+  add_event(3, "tag3", "hello3333333333");
+  add_event(14, "tag4", "hello444");
+  add_event(20, "tag5", "hello5555");
+  add_event(5, "tag6", "hello6");
+  add_event(6, "tag7", "hello7");
+  add_event(7, "tag8", "hello8");
+  add_event(8, "tag9", "hello9");
+  add_event(9, "tag10", "hello10");
+  add_event(2, "tag11", "hello11");
+  add_event(20, "tag12", "hello12");
+  add_event(28, "tag13", "hello13");
+  add_event(28, "tag14", "hello14");
+  add_event(4, "tag15", "hello15");
+</script>
+
 </html>
