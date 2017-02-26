@@ -1,0 +1,49 @@
+#calender{
+        border:2px solid black;
+        font-size:36px;
+        width:700px;
+        height:500px;
+        margin:auto;
+        table-layout:fixed;
+}
+
+#date{
+        text-align:center;
+}
+
+.week{
+        background-color:grey;
+        font-size:24px;
+        text-align:center;
+        font-weight:bold;
+        font-family:sans-serif;
+        table-layout:fixed;
+        text-align:center;
+}
+
+.day{
+        font-family:sans-serif;
+        border:1px solid black;
+        table-layout:fixed;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+        width:80px;
+        height:75px;
+        cursor:pointer;
+	vertical-align:top;
+}
+
+dates{
+	font-size:18px;
+}
+
+tags{
+	font-size:18px;
+	background-color:red;
+}
+
+.text{
+	font-size:18px;
+	text-align: left;	
+}
