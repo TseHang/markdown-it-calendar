@@ -1,0 +1,16 @@
+{
+  "name": "markdown-it-calendar",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/TseHang/Markdown-it-calendar.git",
+  "author": "TseHang <a54383813@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.22.0",
+    "eslint": "^3.16.1",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2"
+  }
+}
