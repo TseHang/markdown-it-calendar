@@ -1,6 +1,20 @@
 # THIS is a Markdown-it-calendar PROJECT
 
-## TODO
-- API
-- Comman JS style
+#### TODO
+- Ouput “STRING”
+- Moudule
+- Npm package
 - mixed
+
+
+## Get started
+
+#### required
+- node.js
+
+
+```shell=
+$ npm install
+$ gulp
+```
+
