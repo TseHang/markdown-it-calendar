@@ -154,7 +154,6 @@ function addCalendarEvent(tbl, month, year, date, tag, description) {
   var firstDay = zeller(month, year);
 
   // The minus 1 ,cause input is date, begin as 1.
-  // (`${month}_${year}_tags_` + (date + firstDay - 1)).html();
   document.getElementById(month + '_' + year + '_tags_' + (date + firstDay - 1)).innerHTML += ' ' + tag + '<br>';
   document.getElementById(month + '_' + year + '_des_' + (date + firstDay - 1)).innerHTML += ' <span class="des-tag">' + tag + '</span> - ' + description + '<br>';
 }
