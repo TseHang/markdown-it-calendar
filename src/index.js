@@ -92,7 +92,7 @@ function datesClickEvent(month, year) {
   }
 }
 
-function calendarTableCreate(month, year) {
+function calendarTableCreate(month, year, data) {
   const tbl = document.createElement('table');
   const monthTotalDay = getMonthDays(month, year);
   const firstDay = zeller(month, year);
@@ -159,13 +159,17 @@ function calendarTableCreate(month, year) {
 function setCalendarTable(month, year) {
   closeDescription(month, year);
   fillInMonthDays(month, year);
+  addCalendarEvent(month, year, data);
   datesClickEvent(month, year);
 }
 
-function addCalendarEvent(tbl, month, year, date, tag, description) {
+function addCalendarEvent(month, year, data) {
   const firstDay = zeller(month, year);
-
-  // The minus 1 ,cause input is date, begin as 1.
-  document.getElementById(`${month}_${year}_tags_` + (date + firstDay - 1)).innerHTML += ` ${tag}<br>`;
-  document.getElementById(`${month}_${year}_des_` + (date + firstDay - 1)).innerHTML += ` <span class="des-tag">${tag}</span> - ${description}<br>`;
+  var i = 0;
+  for(i in data){
+    // The minus 1 ,cause input is date, begin as 1.
+    //data[n] = [date, tag, description]
+    document.getElementById(`${month}_${year}_tags_` + (data[i][0] + firstDay - 1)).innerHTML += ` ${data[i][1]}<br>`;
+    document.getElementById(`${month}_${year}_des_` + (data[i][0] + firstDay - 1)).innerHTML += ` <span class="des-tag">${data[i][1]}</span> - ${data[i][2]}<br>`;
+  }
 }
