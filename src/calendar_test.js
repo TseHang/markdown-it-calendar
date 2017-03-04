@@ -10,7 +10,7 @@ const calendarData = {
 
 const calendarData_1 = {
   "Date": { "year": "2016", "month": "04" },
-  "Content": { "Mon Apr 04 2016 00:00:00 GMT+0800 (CST)": [{ "title": "", "description": "" }, { "title": "two", "description": "two = dua" }, { "title": "breakfast", "description": " sarapan" }, { "title": "sleep", "description": "tidur" }, { "title": "~10:10", "description": " 洗澡" }, { "title": "2", "description": "123123" }], "Fri Apr 08 2016 00:00:00 GMT+0800 (CST)": [{ "title": "洗澡", "description": " 每日必做！" }] }
+  "Content": { "Mon Apr 04 2016 00:00:00 GMT+0800 (CST)": [{ "title": "haha", "description": "hahahi" }, { "title": "two", "description": "two = dua" }, { "title": "breakfast", "description": " sarapan" }, { "title": "sleep", "description": "tidur" }, { "title": "~10:10", "description": " 洗澡" }, { "title": "2", "description": "123123" }], "Fri Apr 08 2016 00:00:00 GMT+0800 (CST)": [{ "title": "洗澡", "description": " 每日必做！" }] }
 };
 
 const month = parseInt(calendarData_1.Date.month);
@@ -19,21 +19,20 @@ const year = parseInt(calendarData_1.Date.year);
 //資料存進data
 const data = new Array();
 
+var i = 0;
 for (let localTime in calendarData_1.Content){
-    var i = 0;
     const time = new Date(localTime);
     const date = time.getDate();
     const event = calendarData_1.Content[localTime];
 
     event.forEach((value)=>{
         //date value.title value.description
-        data[i] = new Array(date, value.title, value.description);
-//        console.log("i = " + i);
-//        console.log("data = " + data[i++]);
+        data[i++] = new Array(date, value.title, value.description);
     })
 }
 //data[0~n] = [date,title,description]
 
+console.log("data = " + data);
 
 //把data帶進去
 var tbl = calendarTableCreate(month, year, data);

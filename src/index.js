@@ -150,7 +150,7 @@ function calendarTableCreate(month, year, data) {
       }
     }
   }
-  setCalendarTable(month, year);
+  setCalendarTable(month, year, data);
 
   return tbl;
 }
@@ -159,17 +159,16 @@ function calendarTableCreate(month, year, data) {
 function setCalendarTable(month, year) {
   closeDescription(month, year);
   fillInMonthDays(month, year);
-  addCalendarEvent(month, year, data);
   datesClickEvent(month, year);
+  addCalendarEvent(month, year, data);
 }
 
 function addCalendarEvent(month, year, data) {
   const firstDay = zeller(month, year);
-  var i = 0;
-  for(i in data){
+  for(let i in data){
     // The minus 1 ,cause input is date, begin as 1.
     //data[n] = [date, tag, description]
     document.getElementById(`${month}_${year}_tags_` + (data[i][0] + firstDay - 1)).innerHTML += ` ${data[i][1]}<br>`;
-    document.getElementById(`${month}_${year}_des_` + (data[i][0] + firstDay - 1)).innerHTML += ` <span class="des-tag">${data[i][1]}</span> - ${data[i][2]}<br>`;
+    document.getElementById(`${month}_${year}_des_` + (data[i][0] + firstDay - 1)).innerHTML += ` <span class="des-tag">${data[i][0]}</span> - ${data[i][2]}<br>`;
   }
 }
