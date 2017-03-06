@@ -102,7 +102,6 @@ function calendarTableCreate(month, year, data) {
 
   tbl.setAttribute('id', `calendar_${month}_${year}`);
   tbl.setAttribute('class', 'markdown-it-calendar');
-
   document.body.appendChild(tbl);
 
   for (let i = 0; i < 49; i++) {
@@ -150,9 +149,14 @@ function calendarTableCreate(month, year, data) {
       }
     }
   }
+
   setCalendarTable(month, year, data);
 
-  return tbl;
+  //convert Dom to html
+  var DomToString = tbl.outerHTML;
+  console.log(DomToString);
+
+  return DomToString;
 }
 
 
@@ -167,7 +171,7 @@ function addCalendarEvent(month, year, data) {
   const firstDay = zeller(month, year);
   for(let i in data){
     // The minus 1 ,cause input is date, begin as 1.
-    //data[n] = [date, tag, description]
+    // data[n] = [date, tag, description]
     document.getElementById(`${month}_${year}_tags_` + (data[i][0] + firstDay - 1)).innerHTML += ` ${data[i][1]}<br>`;
     document.getElementById(`${month}_${year}_des_` + (data[i][0] + firstDay - 1)).innerHTML += ` <span class="des-tag">${data[i][0]}</span> - ${data[i][2]}<br>`;
   }
