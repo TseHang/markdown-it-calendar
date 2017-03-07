@@ -99,6 +99,9 @@ function calendarTableCreate(month, year, data) {
     const firstDay = zeller(month, year); 
 
     for (let j = 0; j < 7; j++) {
+      if((monthTotalDay + firstDay) < countDay){
+        break;
+      }
       // for date and text which need to colspan
       if (i !== 1 && i !== 2 && i !== 10 && i !== 18 && i !== 26 && i !== 34 && i !== 42 && j > 0) {
         break;
@@ -128,11 +131,12 @@ function calendarTableCreate(month, year, data) {
           tags.setAttribute('class', 'tags');
           //tags.innerHTML = "wtf";
 
-          //fill in day of month
+          // fill in day of month
           console.log("count = " + countDay);
-          console.log("first = " + fillDay);
-           
-          if((countDay >= firstDay) ){
+          console.log("first = " + fillDay + "<br>");
+          
+
+          if((countDay > firstDay) ){
             if(fillDay > monthTotalDay){
                 break;
             }
@@ -140,14 +144,14 @@ function calendarTableCreate(month, year, data) {
                 dates.innerHTML = fillDay++;
             }
           }
-           
+          
+          // fill up tags
           for(let k in data){
             if((data[k][0] + firstDay) == countDay){
               tags.innerHTML += data[k][1] + "<br>";
             }
           }
  
-
           countDay += 1; // Grid num + 1
         }
         // Description, colspan for 7
