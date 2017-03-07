@@ -99,7 +99,8 @@ function calendarTableCreate(month, year, data) {
     const firstDay = zeller(month, year); 
 
     for (let j = 0; j < 7; j++) {
-      if((monthTotalDay + firstDay) < countDay){
+      // if the cell no use, dont generate
+      if((monthTotalDay + firstDay) < countDay ){
         break;
       }
       // for date and text which need to colspan
