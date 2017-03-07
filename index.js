@@ -6,7 +6,7 @@ var months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'A
 /*
   use zeller algorithm to count the day's date of months
   zeller algorithm only usable after 15/10/1582
-  return 1~7, 1 = SUN, 2 = MON, ... , 7 = SAT
+  return 0~6, 0 = SUN, 1 = MON, ... , 6 = SAT
 */
 function zeller(month, year) {
   var day = 1;
@@ -14,7 +14,7 @@ function zeller(month, year) {
     month += 12;
     year -= 1;
   }
-  return 1 + (day + parseInt((month + 1) * 26 / 10) + year + parseInt(year / 4) + 6 * parseInt(year / 100) + parseInt(year / 400) - 1) % 7;
+  return (day + parseInt((month + 1) * 26 / 10) + year + parseInt(year / 4) + 6 * parseInt(year / 100) + parseInt(year / 400) - 1) % 7;
 }
 
 var openDescription = function openDescription(num, month, year) {
@@ -53,17 +53,6 @@ function getMonthDays(month, year) {
   return monthTotalDay;
 }
 
-// Fill every month's days
-function fillInMonthDays(month, year) {
-  var monthTotalDay = getMonthDays(month, year);
-  var firstDay = zeller(month, year);
-
-  for (var i = firstDay; i < firstDay + monthTotalDay; i++) {
-    console.log("22");
-    document.getElementById(month + '_' + year + '_dates_' + i).innerHTML = i - firstDay + 1 + '<br>';
-  }
-}
-
 function datesClickEvent(month, year) {
   var firstDay = zeller(month, year);
   var monthTotalDay = getMonthDays(month, year);
@@ -82,21 +71,21 @@ function datesClickEvent(month, year) {
   }
 }
 
-function calendarTableCreate(month, year) {
+function calendarTableCreate(month, year, data) {
   var tbl = document.createElement('table');
-  var monthTotalDay = getMonthDays(month, year);
-  var firstDay = zeller(month, year);
-
   var countDay = 1;
   var countDescription = 1;
+  var fillDay = 1;
 
   tbl.setAttribute('id', 'calendar_' + month + '_' + year);
   tbl.setAttribute('class', 'markdown-it-calendar');
-
-  document.body.appendChild(tbl);
+  tbl.setAttribute('border', '2');
+  //document.body.appendChild(tbl);
 
   for (var i = 0; i < 49; i++) {
     var tr = tbl.insertRow();
+    var monthTotalDay = getMonthDays(month, year);
+    var firstDay = zeller(month, year);
 
     for (var j = 0; j < 7; j++) {
       // for date and text which need to colspan
@@ -124,9 +113,27 @@ function calendarTableCreate(month, year) {
               td.setAttribute('id', month + '_' + year + '_grid_' + countDay);
               td.appendChild(dates).setAttribute('id', month + '_' + year + '_dates_' + countDay);
               td.appendChild(tags).setAttribute('id', month + '_' + year + '_tags_' + countDay);
-
               dates.setAttribute('class', 'dates');
               tags.setAttribute('class', 'tags');
+              //tags.innerHTML = "wtf";
+
+              //fill in day of month
+              console.log("count = " + countDay);
+              console.log("first = " + fillDay);
+
+              if (countDay >= firstDay) {
+                if (fillDay > monthTotalDay) {
+                  break;
+                } else {
+                  dates.innerHTML = fillDay++;
+                }
+              }
+
+              for (var k in data) {
+                if (data[k][0] + firstDay == countDay) {
+                  tags.innerHTML += data[k][1] + "<br>";
+                }
+              }
 
               countDay += 1; // Grid num + 1
             }
@@ -134,26 +141,30 @@ function calendarTableCreate(month, year) {
             else if (i !== 1 && i !== 2 && i !== 10 && i !== 18 && i !== 26 && i !== 34 && i !== 42) {
                 td.setAttribute('colSpan', '7');
                 td.setAttribute('class', 'calendar_desciption');
-                td.setAttribute('id', month + '_' + year + '_des_' + countDescription++);
+                td.setAttribute('id', month + '_' + year + '_des_' + countDescription);
+                //fill in description of each day
+
+                for (var _k in data) {
+                  if (data[_k][0] + firstDay == countDescription) {
+                    td.innerHTML += data[_k][2] + "<br>";
+                  }
+                }
+                countDescription++;
               }
       }
     }
   }
-  setCalendarTable(month, year);
 
-  return tbl;
+  setCalendarTable(month, year, data);
+
+  //convert Dom to html
+  var DomToString = tbl.outerHTML;
+  console.log(DomToString);
+
+  return DomToString;
 }
 
 function setCalendarTable(month, year) {
-  closeDescription(month, year);
-  fillInMonthDays(month, year);
-  datesClickEvent(month, year);
-}
-
-function addCalendarEvent(tbl, month, year, date, tag, description) {
-  var firstDay = zeller(month, year);
-
-  // The minus 1 ,cause input is date, begin as 1.
-  document.getElementById(month + '_' + year + '_tags_' + (date + firstDay - 1)).innerHTML += ' ' + tag + '<br>';
-  document.getElementById(month + '_' + year + '_des_' + (date + firstDay - 1)).innerHTML += ' <span class="des-tag">' + tag + '</span> - ' + description + '<br>';
+  // closeDescription(month, year);
+  // datesClickEvent(month, year);
 }
