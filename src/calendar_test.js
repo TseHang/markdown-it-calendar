@@ -9,31 +9,28 @@ const calendarData = {
 };
 
 const calendarData_1 = {
-  "Date": { "year": "2035", "month": "01" },
+  "Date": { "year": "2016", "month": "04" },
   "Content": { "Mon Apr 04 2016 00:00:00 GMT+0800 (CST)": [{ "title": "tag1", "description": "des1" }, { "title": "tag2", "description": "des2" }, { "title": "tag3", "description": "des3" }, { "title": "tag4", "description": "des4" }, { "title": "tag5", "description": "des5" }, { "title": "tag6", "description": "des6" }], "Fri Apr 20 2016 00:00:00 GMT+0800 (CST)": [{ "title": "tag7", "description": "des7" }] }
 };
 
+const data = [];
 const month = parseInt(calendarData_1.Date.month);
 const year = parseInt(calendarData_1.Date.year);
-
-//資料存進data
-const data = new Array();
-
-var i = 0;
 for (let localTime in calendarData_1.Content){
     const time = new Date(localTime);
     const date = time.getDate();
     const event = calendarData_1.Content[localTime];
 
     event.forEach((value)=>{
-        //date value.title value.description
-        data[i++] = new Array(date, value.title, value.description);
+        data.push({
+          date: date,
+          tag: value.title,
+          des: value.description,
+        });
     })
 }
-//data[0~n] = [date,title,description]
+// data[0~n] = [date,title,description]
 
-console.log("data = " + data);
-
-//把data帶進去
+console.log(data);
 var tbl = calendarTableCreate(month, year, data);
 

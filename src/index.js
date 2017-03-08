@@ -84,6 +84,7 @@ function datesClickEvent(month, year) {
 
 function calendarTableCreate(month, year, data) {
   const tbl = document.createElement('table');
+
   let countDay = 1;
   let countDescription = 1;
   let fillDay = 1;
@@ -133,8 +134,8 @@ function calendarTableCreate(month, year, data) {
           //tags.innerHTML = "wtf";
 
           // fill in day of month
-          console.log("count = " + countDay);
-          console.log("first = " + fillDay + "<br>");
+          // console.log("count = " + countDay);
+          // console.log("first = " + fillDay + "<br>");
           
 
           if((countDay > firstDay) ){
@@ -148,8 +149,8 @@ function calendarTableCreate(month, year, data) {
           
           // fill up tags
           for(let k in data){
-            if((data[k][0] + firstDay) == countDay){
-              tags.innerHTML += data[k][1] + "<br>";
+            if((data[k].date + firstDay) == countDay){
+              tags.innerHTML += data[k].tag + "<br>";
             }
           }
  
@@ -163,8 +164,8 @@ function calendarTableCreate(month, year, data) {
           //fill in description of each day
 
             for(let k in data){
-              if((data[k][0] + firstDay) == countDescription){
-                td.innerHTML += data[k][2] + "<br>";
+              if((data[k].date + firstDay) == countDescription){
+                td.innerHTML += data[k].des + "<br>";
               }
             }
             countDescription++;
@@ -172,18 +173,9 @@ function calendarTableCreate(month, year, data) {
       }
     }
   }
-
-  setCalendarTable(month, year, data);
-
   //convert Dom to html
-  var DomToString = tbl.outerHTML;
-  console.log(DomToString);
-
-  return DomToString;
+  console.log(tbl.outerHTML);
+  return tbl.outerHTML;
 }
 
 
-function setCalendarTable(month, year) {
-   // closeDescription(month, year);
-   // datesClickEvent(month, year);
-}

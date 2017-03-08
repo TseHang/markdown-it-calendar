@@ -73,6 +73,7 @@ function datesClickEvent(month, year) {
 
 function calendarTableCreate(month, year, data) {
   var tbl = document.createElement('table');
+
   var countDay = 1;
   var countDescription = 1;
   var fillDay = 1;
@@ -88,6 +89,10 @@ function calendarTableCreate(month, year, data) {
     var firstDay = zeller(month, year);
 
     for (var j = 0; j < 7; j++) {
+      // if the cell no use, dont generate
+      if (monthTotalDay + firstDay < countDay) {
+        break;
+      }
       // for date and text which need to colspan
       if (i !== 1 && i !== 2 && i !== 10 && i !== 18 && i !== 26 && i !== 34 && i !== 42 && j > 0) {
         break;
@@ -117,11 +122,12 @@ function calendarTableCreate(month, year, data) {
               tags.setAttribute('class', 'tags');
               //tags.innerHTML = "wtf";
 
-              //fill in day of month
-              console.log("count = " + countDay);
-              console.log("first = " + fillDay);
+              // fill in day of month
+              // console.log("count = " + countDay);
+              // console.log("first = " + fillDay + "<br>");
 
-              if (countDay >= firstDay) {
+
+              if (countDay > firstDay) {
                 if (fillDay > monthTotalDay) {
                   break;
                 } else {
@@ -129,9 +135,10 @@ function calendarTableCreate(month, year, data) {
                 }
               }
 
+              // fill up tags
               for (var k in data) {
-                if (data[k][0] + firstDay == countDay) {
-                  tags.innerHTML += data[k][1] + "<br>";
+                if (data[k].date + firstDay == countDay) {
+                  tags.innerHTML += data[k].tag + "<br>";
                 }
               }
 
@@ -145,8 +152,8 @@ function calendarTableCreate(month, year, data) {
                 //fill in description of each day
 
                 for (var _k in data) {
-                  if (data[_k][0] + firstDay == countDescription) {
-                    td.innerHTML += data[_k][2] + "<br>";
+                  if (data[_k].date + firstDay == countDescription) {
+                    td.innerHTML += data[_k].des + "<br>";
                   }
                 }
                 countDescription++;
@@ -154,17 +161,7 @@ function calendarTableCreate(month, year, data) {
       }
     }
   }
-
-  setCalendarTable(month, year, data);
-
   //convert Dom to html
-  var DomToString = tbl.outerHTML;
-  console.log(DomToString);
-
-  return DomToString;
-}
-
-function setCalendarTable(month, year) {
-  // closeDescription(month, year);
-  // datesClickEvent(month, year);
+  console.log(tbl.outerHTML);
+  return tbl.outerHTML;
 }
