@@ -101,7 +101,7 @@ function calendarTableCreate(month, year, data) {
 
     for (let j = 0; j < 7; j++) {
       // if the cell no use, dont generate
-      if((monthTotalDay + firstDay) < countDay ){
+      if((monthTotalDay + firstDay) < countDescription ){
         break;
       }
       // for date and text which need to colspan
@@ -131,13 +131,12 @@ function calendarTableCreate(month, year, data) {
           td.appendChild(tags).setAttribute('id', `${month}_${year}_tags_${countDay}` );
           dates.setAttribute('class', 'dates');
           tags.setAttribute('class', 'tags');
-          //tags.innerHTML = "wtf";
-
-          // fill in day of month
-          // console.log("count = " + countDay);
-          // console.log("first = " + fillDay + "<br>");
           
-
+        /* // border = 0
+          if((firstDay >= countDay) || (firstDay + monthTotalDay) < countDay){
+            td.style.border = "0";
+          }
+        */
           if((countDay > firstDay) ){
             if(fillDay > monthTotalDay){
                 break;
