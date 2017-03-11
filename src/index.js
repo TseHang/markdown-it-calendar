@@ -17,7 +17,7 @@ const months = [
   'DECEMBER'
 ]
 exports.calendarPlugin = function (md, options) {
-  var name = 'calendar',
+  let name = 'calendar',
     startMarkerStr = '#[' + name + '=',
     endMarkerStr = '#[/' + name + ']',
     DATE_REGEX = /<!--\s*(\d+)\s*-->/,
@@ -31,8 +31,8 @@ exports.calendarPlugin = function (md, options) {
     // return true if params is valid
     params = params.trim().split(' ')
     try {
-      var year = parseInt(params[0])
-      var month = parseInt(params[1])
+      let year = parseInt(params[0])
+      let month = parseInt(params[1])
 
       return month <= 12 && month >= 1
     } catch (err) {
@@ -41,13 +41,13 @@ exports.calendarPlugin = function (md, options) {
   }
 
   function createCalendarHTML (data) {
-    var iterDate = new Date(data.Date.year, data.Date.month, 0)
-    var daysNum = iterDate.getDate()
+    let iterDate = new Date(data.Date.year, data.Date.month, 0)
+    let daysNum = iterDate.getDate()
     iterDate.setDate(1)
-    var firstDay = iterDate.getDay()
+    let firstDay = iterDate.getDay()
 
-    var calendar = document.createElement('table')
-    var tr, td
+    let calendar = document.createElement('table')
+    let tr, td
     calendar.className = 'calendar'
 
     // init title
@@ -58,13 +58,13 @@ exports.calendarPlugin = function (md, options) {
 
     // week name row
     tr = calendar.insertRow()
-    for (var i = 0; i < 7; ++i) {
+    for (let i = 0; i < 7; ++i) {
       td = tr.insertCell()
       td.innerHTML = weeks[i]
     }
 
     // blank days
-    for (var i = 0; i < firstDay; ++i) {
+    for (let i = 0; i < firstDay; ++i) {
       if (i % 7 == 0) {
         tr = calendar.insertRow()
       }
@@ -72,14 +72,15 @@ exports.calendarPlugin = function (md, options) {
     }
 
     // general days
-    for (var i = firstDay; i < daysNum + firstDay; ++i) {
-      var today = i - firstDay + 1
+    for (let i = firstDay; i < daysNum + firstDay; ++i) {
+      let today = i - firstDay + 1
       if (i % 7 == 0) {
         tr = calendar.insertRow()
       }
       td = tr.insertCell()
       iterDate.setDate(today)
       td.innerHTML = today + '<br>'
+
       if (data.Content[iterDate]) {
         data.Content[iterDate].forEach((e) => {
           td.innerHTML += e.title + ':' + e.description + '<br>'
@@ -88,7 +89,7 @@ exports.calendarPlugin = function (md, options) {
     }
 
     // blank days
-    for (var i = daysNum + firstDay; i % 7 != 0; ++i) {
+    for (let i = daysNum + firstDay; i % 7 != 0; ++i) {
       td = tr.insertCell()
     }
 
@@ -104,22 +105,15 @@ exports.calendarPlugin = function (md, options) {
   /*************************************************************
    * Helper functions
    */
-  function isValidDate (time) {
+  function isValidDate (d) {
     // time structure must be {year: 2017, month: 12, date: 30, time: "13:14"}
     try {
-      var year = (time['year']).toString()
-      var month = (time['month']).toString()
-      var date = (time['date'] || '').toString()
-      var time = (time['time'] || '').toString()
-      var str = [month, date, year, time].join(' ')
-      var result = Date.parse(str)
-      if (isNaN(result)) {
-        return false
-      }
+      let result = new Date(d.year, d.month - 1, d.date)
+      let valid = d.year === result.getFullYear() &&
+              d.month === (result.getMonth() + 1) &&
+              d.date === result.getDate()
 
-      // Ensure the month is same
-      var newDate = new Date(result)
-      if (newDate.getMonth() === parseInt(month) - 1) { return newDate }
+      return valid ? result : false
     } catch (err) {
       return false
     }
@@ -130,8 +124,8 @@ exports.calendarPlugin = function (md, options) {
     // input str must be "xx:xx"
     try {
       str = str.split(':')
-      var hour = parseInt(str[0])
-      var minute = parseInt(str[1])
+      let hour = parseInt(str[0])
+      let minute = parseInt(str[1])
       return hour < 24 && hour > -1 && minute < 60 && minute > -1
     } catch (err) {
       return false
@@ -140,7 +134,7 @@ exports.calendarPlugin = function (md, options) {
 
   function parseStartLine (src, start, end, validateFunc) {
     // Return earlier if not match
-    var valid = src[end - 1] === ']'
+    let valid = src[end - 1] === ']'
     if (!valid) {
       return false
     }
@@ -155,10 +149,10 @@ exports.calendarPlugin = function (md, options) {
       return false
     }
 
-    var params = src.substring(start + startMarkerStr.length, end - 1).trim().split(' ')
+    let params = src.substring(start + startMarkerStr.length, end - 1).trim().split(' ')
     return {
-      year: params[0],
-      month: params[1]
+      year: parseInt(params[0]),
+      month: parseInt(params[1])
     }
   }
 
@@ -168,11 +162,10 @@ exports.calendarPlugin = function (md, options) {
 
   function parseDate (src, start, end, time) {
     // extract a valid Date
-    var lineStr = src.substring(start, end).trim()
+    let lineStr = src.substring(start, end).trim()
     try {
-    // var date = lineStr.match(/\(\s*(\d+)\s*\):/)
-      var date = lineStr.match(DATE_REGEX)
-      var localTime = Object.assign({}, time)
+      let date = lineStr.match(DATE_REGEX)
+      let localTime = Object.assign({}, time)
       localTime['date'] = parseInt(date[1])
       return isValidDate(localTime)
     } catch (err) {
@@ -182,9 +175,9 @@ exports.calendarPlugin = function (md, options) {
   }
 
   function parseEvent (src, start, end) {
-    var lineStr = src.substring(start, end).trim()
+    let lineStr = src.substring(start, end).trim()
     try {
-      var event = lineStr.match(EVENT_REGEX)
+      let event = lineStr.match(EVENT_REGEX)
       return {
         title: event[1],
         description: event[2]
@@ -196,7 +189,7 @@ exports.calendarPlugin = function (md, options) {
   }
 
   function addToken (state, params) {
-    var token = state.push(params.type, params.tag || 'div', params.nesting)
+    let token = state.push(params.type, params.tag || 'div', params.nesting)
     token.markup = params.markup || ''
     token.block = params.block || true
     token.content = params.content || ''
@@ -213,14 +206,14 @@ exports.calendarPlugin = function (md, options) {
 
   options = options || {}
 
-  var validateParam = options.validateParam || validateParamsDefault,
+  let validateParam = options.validateParam || validateParamsDefault,
     render = options.render || renderDefault
 
   /*************************************************************
    * Rule function
    */
   function calendarRule (state, startLine, endLine, silent) {
-    var currentLine,
+    let currentLine, currentDay,
       autoClosed = 0,
       token,
       start = state.bMarks[startLine] + state.tShift[startLine],
@@ -230,10 +223,8 @@ exports.calendarPlugin = function (md, options) {
         Content: {}
       }
 
-    var currentDay
-
     // check the first line is correct
-    var date = parseStartLine(state.src, start, end, validateParam)
+    let date = parseStartLine(state.src, start, end, validateParam)
     if (date === false) {
       return false
     }
@@ -248,21 +239,19 @@ exports.calendarPlugin = function (md, options) {
       start = state.bMarks[currentLine] + state.tShift[currentLine]
       end = state.eMarks[currentLine]
 
+      // Meet day line
+      let day = parseDate(state.src, start, end, date)
+      if (day) {
+        currentDay = day
+        continue
+      } // ======================================================
+
       // Meet event line
       event = parseEvent(state.src, start, end)
       if (currentDay && event) {
         renderInfo['Content'][currentDay] = renderInfo['Content'][currentDay] || []
         renderInfo['Content'][currentDay].push(event)
         continue
-      } // ======================================================
-
-      // Meet day line
-      var day = parseDate(state.src, start, end, date)
-      if (day) {
-        currentDay = day
-        continue
-      } else {
-        currentDay = undefined
       } // ======================================================
 
       // Meet End of line
