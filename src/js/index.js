@@ -1,26 +1,27 @@
 require('./calendar.css')
 import createCalendarHTML from './calendar'
 
-module.exports = function calendarPlugin(md, options) {
+module.exports = function calendarPlugin (md, options) {
   let name = 'calendar',
     startMarkerStr = '#[' + name + '=',
     endMarkerStr = '#[/' + name + ']',
+    PARAM_REGEX = /^(\d+)[ ]+(\d+)$/,
     DATE_REGEX = /<!--\s*(\d+)\s*-->/,
     EVENT_REGEX = /@\[(.*?)\](.*)/
 
-/*************************************************************
- * Default validate and render function
- */
+  /*************************************************************
+   * Default validate and render function
+   */
 
   function validateParamsDefault (params) {
     // return true if params is valid
-    params = params.trim().split(' ')
-    try {
-      let year = parseInt(params[0])
-      let month = parseInt(params[1])
-
-      return month <= 12 && month >= 1
-    } catch (err) {
+    params = params.trim()
+    params = params.match(PARAM_REGEX)
+    if (params) {
+      var year = parseInt(params[1])
+      var month = parseInt(params[2])
+      return year >= 0 && year <= 100000 && month >= 1 && month <= 12
+    } else {
       return false
     }
   }
