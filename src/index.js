@@ -1,4 +1,3 @@
-'use strict'
 require('./calendar.css')
 
 const weeks = ['SUN', 'MON', 'TUE', 'WED', 'THUS', 'FRI', 'SAT']
@@ -16,7 +15,7 @@ const months = [
   'NOVEMBER',
   'DECEMBER'
 ]
-exports.calendarPlugin = function (md, options) {
+const calendarPlugin = (md, options) => {
   var name = 'calendar',
     startMarkerStr = '#[' + name + '=',
     endMarkerStr = '#[/' + name + ']',
@@ -291,3 +290,5 @@ exports.calendarPlugin = function (md, options) {
   })
   md.renderer.rules[name] = renderDefault
 }
+
+export default calendarPlugin
