@@ -13,19 +13,6 @@ module.exports = function calendarPlugin (md, options) {
    * Default validate and render function
    */
 
-  function validateParamsDefault (params) {
-    // return true if params is valid
-    params = params.trim()
-    params = params.match(PARAM_REGEX)
-    if (params) {
-      var year = parseInt(params[1])
-      var month = parseInt(params[2])
-      return year >= 0 && year <= 100000 && month >= 1 && month <= 12
-    } else {
-      return false
-    }
-  }
-
   function renderDefault (tokens, idx, _options, env, self) {
     const data = tokens[idx].info
     const table = createCalendarHTML(data)
@@ -39,30 +26,35 @@ module.exports = function calendarPlugin (md, options) {
     // time structure must be {year: 2017, month: 12, date: 30, time: "13:14"}
     try {
       let result = new Date(d.year, d.month - 1, d.date)
+      result.setFullYear(d.year) // ensure every year can be used
       let valid = d.year === result.getFullYear() &&
               d.month === (result.getMonth() + 1) &&
               d.date === result.getDate()
-
-      return valid ? result : false
+      return valid ? result : 'Invalid'
     } catch (err) {
       return false
     }
     return false
   }
 
-  function isValidTime (str) {
-    // input str must be "xx:xx"
+  function isValidParam (params) {
+    // return true if params is valid
     try {
-      str = str.split(':')
-      let hour = parseInt(str[0])
-      let minute = parseInt(str[1])
-      return hour < 24 && hour > -1 && minute < 60 && minute > -1
-    } catch (err) {
+      params = params.trim()
+      params = params.match(PARAM_REGEX)
+      if (params) {
+        var year = parseInt(params[1])
+        var month = parseInt(params[2])
+        return year >= 0 && year <= 100000 && month >= 1 && month <= 12
+      } else {
+        return false
+      }
+    } catch (e) {
       return false
     }
   }
 
-  function parseStartLine (src, start, end, validateFunc) {
+  function parseStartLine (src, start, end) {
     // Return earlier if not match
     let valid = src[end - 1] === ']'
     if (!valid) {
@@ -74,15 +66,15 @@ module.exports = function calendarPlugin (md, options) {
       return false
     }
 
-    valid = validateFunc(src.substring(start + startMarkerStr.length, end - 1))
+    valid = isValidParam(src.substring(start + startMarkerStr.length, end - 1))
     if (!valid) {
       return false
     }
+    let params = src.substring(start + startMarkerStr.length, end - 1).match(PARAM_REGEX)
 
-    let params = src.substring(start + startMarkerStr.length, end - 1).trim().split(' ')
     return {
-      year: parseInt(params[0]),
-      month: parseInt(params[1])
+      year: parseInt(params[1]),
+      month: parseInt(params[2])
     }
   }
 
@@ -136,8 +128,7 @@ module.exports = function calendarPlugin (md, options) {
 
   options = options || {}
 
-  let validateParam = options.validateParam || validateParamsDefault,
-    render = options.render || renderDefault
+  let render = options.render || renderDefault
 
   /*************************************************************
    * Rule function
@@ -154,7 +145,7 @@ module.exports = function calendarPlugin (md, options) {
       }
 
     // check the first line is correct
-    let date = parseStartLine(state.src, start, end, validateParam)
+    let date = parseStartLine(state.src, start, end)
     if (date === false) {
       return false
     }
@@ -171,7 +162,9 @@ module.exports = function calendarPlugin (md, options) {
 
       // Meet day line
       let day = parseDate(state.src, start, end, date)
-      if (day) {
+      if (day === 'Invalid') {
+        currentDay = undefined
+      } else if (day) {
         currentDay = day
         continue
       } // ======================================================

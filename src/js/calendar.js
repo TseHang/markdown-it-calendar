@@ -19,6 +19,7 @@ const createCalendarHTML = (data) => {
   const month = data.Date.month
 
   let iterDate = new Date(year, month, 0)
+  iterDate.setFullYear(year) // ensure every year can be used
   const daysNum = iterDate.getDate()
   iterDate.setDate(1)
 
@@ -55,9 +56,9 @@ const createCalendarHTML = (data) => {
 
   // general days
   for (let i = firstDay; i < daysNum + firstDay; ++i) {
-    const date = document.createElement('p');
-    const tag = document.createElement('div');
-    const event = document.createElement('p');
+    const date = document.createElement('p')
+    const tag = document.createElement('div')
+    const event = document.createElement('p')
     const today = i - firstDay + 1
 
     if (i % 7 === 0) {
@@ -79,7 +80,6 @@ const createCalendarHTML = (data) => {
       })
     }
   }
-
 
   // blank days
   for (let i = daysNum + firstDay; i % 7 !== 0; ++i) {
