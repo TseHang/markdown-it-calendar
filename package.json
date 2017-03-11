@@ -1,6 +1,6 @@
 {
   "name": "markdown-it-calendar",
-  "version": "0.0.2",
+  "version": "1.0.2",
   "main": "index.js",
   "repository": "https://github.com/TseHang/Markdown-it-calendar.git",
   "author": "Donbadar TseHang ",
@@ -12,6 +12,9 @@
     "eslint-plugin-import": "^2.2.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
+    "gulp-clean-css": "^3.0.3",
+    "gulp-compass": "^2.1.0",
+    "gulp-minify-css": "^1.2.4",
     "gulp-uglify": "^2.1.0"
   }
 }

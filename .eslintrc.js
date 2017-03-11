@@ -10,6 +10,7 @@
 //     "import"
 //   ],
 //   "rules": {
+//     "semi": [1, "never"],
 //     "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
 //     "brace-style": 0,
 //   }

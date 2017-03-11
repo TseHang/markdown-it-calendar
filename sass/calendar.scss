@@ -1,0 +1,76 @@
+$yellow: #fcf8e3;
+$pink: rgb(237, 172, 172);
+.markdown-it-calendar {
+  > .calendar {
+    display: table;
+
+    > tbody > tr {
+      > td {
+        border-top: none;
+      }
+    }
+  }
+  
+  .calendar-title {
+    font-weight: bold;
+    font-size: 1.4em;
+    padding: .5em;
+    letter-spacing: 2px;
+    font-family: sans-serif;
+    background-color: #5e5e5e;
+    color: white;
+  }
+
+  .calendar-title-year {
+    font-weight: 100;
+    margin-left: 2%;
+    letter-spacing: 0px;
+  }
+
+  .calendar-day{
+    &:hover{
+      background-color: #f5f5f5;
+    }
+  }
+
+  .calendar-week {
+    background-color: $pink;
+    text-align: center;
+    color: white;
+  }
+
+  .calendar-date { 
+    position: relative;
+    left: -2px;
+    top: -4px;
+    margin-bottom: 10px;
+
+    font-size: .9em;
+    font-weight: 200;
+  }
+
+  table tr{
+    background-color: white !important;
+  }
+
+  table th {
+    border-bottom: none;
+  }
+
+  table tr {
+    &:first-child {
+      border-bottom: none;
+    }
+    &:nth-child(2) {
+      border-top: none;
+    }
+  }
+
+  table td {
+    border: none;
+  }
+
+  tbody {
+    border: solid 2px rgba(204, 204, 204, 0.3) !important;
+  }
+}
