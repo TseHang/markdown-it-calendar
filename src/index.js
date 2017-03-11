@@ -16,7 +16,7 @@ const months = [
   'December'
 ]
 
-module.exports = function calendarPlugin(md, options) {
+module.exports = function calendarPlugin (md, options) {
   let name = 'calendar',
     startMarkerStr = '#[' + name + '=',
     endMarkerStr = '#[/' + name + ']',
@@ -113,7 +113,7 @@ module.exports = function calendarPlugin(md, options) {
               d.month === (result.getMonth() + 1) &&
               d.date === result.getDate()
 
-      return valid ? result : false
+      return valid ? result : 'Invalid'
     } catch (err) {
       return false
     }
@@ -165,6 +165,10 @@ module.exports = function calendarPlugin(md, options) {
     let lineStr = src.substring(start, end).trim()
     try {
       let date = lineStr.match(DATE_REGEX)
+      if (!date.length) {
+        return false
+      }
+
       let localTime = Object.assign({}, time)
       localTime['date'] = parseInt(date[1])
       return isValidDate(localTime)
@@ -239,18 +243,20 @@ module.exports = function calendarPlugin(md, options) {
       start = state.bMarks[currentLine] + state.tShift[currentLine]
       end = state.eMarks[currentLine]
 
-      // Meet day line
-      let day = parseDate(state.src, start, end, date)
-      if (day) {
-        currentDay = day
-        continue
-      } // ======================================================
-
       // Meet event line
       event = parseEvent(state.src, start, end)
       if (currentDay && event) {
         renderInfo['Content'][currentDay] = renderInfo['Content'][currentDay] || []
         renderInfo['Content'][currentDay].push(event)
+        continue
+      } // ======================================================
+
+      // Meet day line
+      let day = parseDate(state.src, start, end, date)
+      if (day === 'Invalid') {
+        currentDay = undefined
+      } else if (day) {
+        currentDay = day
         continue
       } // ======================================================
 
