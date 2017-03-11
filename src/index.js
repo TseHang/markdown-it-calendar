@@ -16,7 +16,7 @@ const months = [
   'DECEMBER'
 ]
 
-const calendarPlugin = (md, options) => {
+module.exports = function calendarPlugin(md, options) => {
   let name = 'calendar',
     startMarkerStr = '#[' + name + '=',
     endMarkerStr = '#[/' + name + ']',
@@ -280,5 +280,3 @@ const calendarPlugin = (md, options) => {
   })
   md.renderer.rules[name] = renderDefault
 }
-
-export default calendarPlugin
