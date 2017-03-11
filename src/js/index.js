@@ -70,7 +70,7 @@ module.exports = function calendarPlugin (md, options) {
     if (!valid) {
       return false
     }
-    let params = src.substring(start + startMarkerStr.length, end - 1).match(PARAM_REGEX)
+    let params = src.substring(start + startMarkerStr.length, end - 1).trim().match(PARAM_REGEX)
 
     return {
       year: parseInt(params[1]),
