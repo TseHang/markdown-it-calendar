@@ -9,6 +9,8 @@ module.exports = function calendarPlugin (md, options) {
     DATE_REGEX = /<!--\s*(\d+)\s*-->/,
     EVENT_REGEX = /@\[(.*?)\](.*)/
 
+  options = options || {}
+  let render = options.render || renderDefault
   /*************************************************************
    * Default validate and render function
    */
@@ -37,7 +39,7 @@ module.exports = function calendarPlugin (md, options) {
     return false
   }
 
-  function isValidParam (params) {
+  function isValidParams (params) {
     // return true if params is valid
     try {
       params = params.trim()
@@ -66,7 +68,7 @@ module.exports = function calendarPlugin (md, options) {
       return false
     }
 
-    valid = isValidParam(src.substring(start + startMarkerStr.length, end - 1))
+    valid = isValidParams(src.substring(start + startMarkerStr.length, end - 1))
     if (!valid) {
       return false
     }
@@ -123,12 +125,6 @@ module.exports = function calendarPlugin (md, options) {
     }
     return token
   }
-
-  /*************************************************************/
-
-  options = options || {}
-
-  let render = options.render || renderDefault
 
   /*************************************************************
    * Rule function
