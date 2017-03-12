@@ -3,11 +3,11 @@ import createCalendarHTML from './calendar'
 
 module.exports = function calendarPlugin (md, options) {
   let name = 'calendar',
-    startMarkerStr = '#[' + name + '=',
-    endMarkerStr = '#[/' + name + ']',
+    startMarkerStr = '::: ' + name + ' ',
+    endMarkerStr = ':::',
     PARAM_REGEX = /^(\d+)[ ]+(\d+)$/,
-    DATE_REGEX = /<!--\s*(\d+)\s*-->/,
-    EVENT_REGEX = /@\[(.*?)\](.*)/
+    DATE_REGEX = /^[+*-]\s+(\d{1,2})(\s(.*))?$/,
+    EVENT_REGEX = /^[-*+]\s*\[(.*)\]\s*(.*)$/
 
   options = options || {}
   let render = options.render || renderDefault
@@ -58,21 +58,16 @@ module.exports = function calendarPlugin (md, options) {
 
   function parseStartLine (src, start, end) {
     // Return earlier if not match
-    let valid = src[end - 1] === ']'
+    let valid = src.substring(start, start + startMarkerStr.length).toLowerCase() === startMarkerStr
     if (!valid) {
       return false
     }
 
-    valid = src.substring(start, start + startMarkerStr.length) === startMarkerStr
+    valid = isValidParams(src.substring(start + startMarkerStr.length, end))
     if (!valid) {
       return false
     }
-
-    valid = isValidParams(src.substring(start + startMarkerStr.length, end - 1))
-    if (!valid) {
-      return false
-    }
-    let params = src.substring(start + startMarkerStr.length, end - 1).trim().match(PARAM_REGEX)
+    let params = src.substring(start + startMarkerStr.length, end).trim().match(PARAM_REGEX)
 
     return {
       year: parseInt(params[1]),
