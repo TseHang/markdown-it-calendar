@@ -3,15 +3,16 @@
 
 ## Syntax
 ```
-#[calendar= 2016 03]
-<!-- 1 -->
-@[My title] Description
-@[10:00~12:00] Meeting
+::: Calendar 2017 03
+- 1
+    - [Title1] Description1 
+    - [Title2] Description2
+    - [Title3] Description3
 
-<!-- 20 -->
-@[15:00~17:00] Sync up with 
-
-#[/calendar]
+- 20
+    - [Title5] Description5
+    - [Title6] Description6
+:::
 ```
 
 
