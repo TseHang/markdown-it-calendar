@@ -14,9 +14,19 @@ const months = [
   'December'
 ]
 
-const createCalendarHTML = (data) => {
-  const year = data.Date.year
-  const month = data.Date.month
+// Transalate markdown syntax to HTML
+const md2HTML = (md, src) => {
+  // Filt the paragraph tokens
+  let tokens = md.parse(src, {}).filter((element) => {
+    return (element.type != 'paragraph_open') && (element.type != 'paragraph_close')
+  })
+  return md.renderer.render(tokens, {html: false})
+}
+
+const createCalendarHTML = (md, data) => {
+  const year = data.Year
+  const month = data.Month
+  const days = data.Days
 
   let iterDate = new Date(year, month, 0)
   iterDate.setFullYear(year) // ensure every year can be used
@@ -56,9 +66,7 @@ const createCalendarHTML = (data) => {
 
   // general days
   for (let i = firstDay; i < daysNum + firstDay; ++i) {
-    const date = document.createElement('p')
-    const tag = document.createElement('div')
-    const event = document.createElement('p')
+    const cellContentDate = document.createElement('p')
     const today = i - firstDay + 1
 
     if (i % 7 === 0) {
@@ -68,16 +76,68 @@ const createCalendarHTML = (data) => {
     td.className = 'calendar-day'
     iterDate.setDate(today)
 
-    date.innerHTML = today
-    date.className = 'calendar-date'
-    td.appendChild(date)
+    cellContentDate.innerHTML = today
+    cellContentDate.className = 'calendar-date'
+    td.appendChild(cellContentDate)
 
-    if (data.Content[iterDate]) {
-      data.Content[iterDate].forEach((e, index) => {
-        tag.innerHTML += e.title + ':' + e.description + '<br>'
-        tag.className = 'tag'
-        td.appendChild(tag)
-      })
+    if (days[iterDate] !== undefined) {
+      const events = days[iterDate].events
+
+      const cellContent = document.createElement('div')
+      const dayOverview = document.createElement('div')
+
+      // Insert Titles
+      if (days[iterDate].title !== undefined) {
+        const cellContentTitle = document.createElement('div')
+        const dayOverviewTitleHTML = md2HTML(md, days[iterDate].title)
+        const dayOverviewTitle = document.createElement('div')
+
+        // insert cellContent Title
+        cellContentTitle.setAttribute('class', 'calendar-dayTitle calendar-content-title')
+        cellContentTitle.innerHTML = `${dayOverviewTitleHTML}`
+        td.appendChild(cellContentTitle)
+
+        // insert dayOverview title
+        dayOverviewTitle.innerHTML = dayOverviewTitleHTML
+        dayOverviewTitle.className = 'calendar-des-title'
+        dayOverview.appendChild(dayOverviewTitle)
+      }
+
+      if (events) {
+        events.forEach((e) => {
+          const cellContentTag = document.createElement('div')
+          const dayOverviewEvent = document.createElement('div')
+
+          const tagHTML = md2HTML(md, e.tag)
+          const descriptionHTML = md2HTML(md, e.description)
+
+          // Add event into cellContent
+          // This part has weird logic, but can work and I don't understand...
+          cellContentTag.innerHTML = tagHTML
+          if (e.description && e.description.length) {
+            cellContentTag.innerHTML += `<div class="calendar-tag-hover">${descriptionHTML}</div>`
+          }
+          cellContentTag.className = 'calendar-tag'
+          cellContent.appendChild(cellContentTag)
+
+          // Add event into dayOverview
+          const dayOverviewTagHTML = (e.description && e.description.length) ? (tagHTML + ' : ') : tagHTML
+          dayOverviewEvent.innerHTML = `<span class="calendar-des-tag">${dayOverviewTagHTML} </span> ${descriptionHTML}`
+          dayOverview.appendChild(dayOverviewEvent)
+        })
+      }
+
+      const dayOverviewDate = document.createElement('p')
+      dayOverviewDate.innerHTML = `${year}.${month}.${today}`
+      dayOverviewDate.className = 'calendar-des-date'
+      dayOverview.appendChild(dayOverviewDate)
+
+      // why you always set className after setting innerHTML???
+      cellContent.className = 'calendar-content'
+      dayOverview.className = 'calendar-description'
+
+      td.appendChild(cellContent)
+      td.appendChild(dayOverview)
     }
   }
 

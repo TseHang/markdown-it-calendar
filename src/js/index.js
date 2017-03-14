@@ -2,14 +2,15 @@ require('./calendar.css')
 import createCalendarHTML from './calendar'
 
 module.exports = function calendarPlugin (md, options) {
-  let name = 'calendar',
-    startMarkerStr = '::: ' + name + ' ',
-    endMarkerStr = ':::',
-    PARAM_REGEX = /^(\d+)[ ]+(\d+)$/,
-    DATE_REGEX = /^[+*-]\s+(\d{1,2})(\s(.*))?$/,
-    EVENT_REGEX = /^[-*+]\s*\[(.*)\]\s*(.*)$/
-
   options = options || {}
+
+  let name = 'calendar',
+    startMarkerStr = options.startMarker || `:::${name}`,
+    endMarkerStr = options.endMarker || ':::',
+    PARAM_REGEX = options.PARAM_REGEX || /^(\((.*)\)){0,1}\s+(\d+)[ ]+(\d+)\s*$/,
+    DATE_REGEX = options.DATE_REGEX || /^[+*-]\s+(\d{1,2})(\s(.*))?$/,
+    EVENT_REGEX = options.EVENT_REGEX || /^[-*+]\s*\[(.*)\]\s*(.*)$/
+
   let render = options.render || renderDefault
   /*************************************************************
    * Default validate and render function
@@ -17,43 +18,54 @@ module.exports = function calendarPlugin (md, options) {
 
   function renderDefault (tokens, idx, _options, env, self) {
     const data = tokens[idx].info
-    const table = createCalendarHTML(data)
-    return '<div class="markdown-it-calendar">' + table + '</div>'
+    const table = createCalendarHTML(md, data)
+    const style = data.Style === 'dark' ? 'dark' : ''
+    return `<div class="markdown-it-calendar ${style}">` + table + '</div>'
   }
 
   /*************************************************************
    * Helper functions
    */
+
+  // time structure must be {year: 2017, month: 12, date: 30, time: "13:14"}
   function isValidDate (d) {
-    // time structure must be {year: 2017, month: 12, date: 30, time: "13:14"}
     try {
       let result = new Date(d.year, d.month - 1, d.date)
       result.setFullYear(d.year) // ensure every year can be used
       let valid = d.year === result.getFullYear() &&
               d.month === (result.getMonth() + 1) &&
               d.date === result.getDate()
-      return valid ? result : 'Invalid'
+      return valid ? result : false
     } catch (err) {
       return false
     }
     return false
   }
 
-  function isValidParams (params) {
-    // return true if params is valid
+  // return true if params is valid
+  function parseParams (params) {
+    // return earlier
+    if (params[0] != '(' && params[0] != ' ') {
+      return false
+    }
     try {
-      params = params.trim()
       params = params.match(PARAM_REGEX)
       if (params) {
-        var year = parseInt(params[1])
-        var month = parseInt(params[2])
-        return year >= 0 && year <= 100000 && month >= 1 && month <= 12
-      } else {
-        return false
+        let style = params[2]
+        let year = parseInt(params[3])
+        let month = parseInt(params[4])
+        if (year >= 0 && year <= 100000 && month >= 1 && month <= 12) {
+          return {
+            style: style,
+            year: year,
+            month: month
+          }
+        }
       }
     } catch (e) {
       return false
     }
+    return false
   }
 
   function parseStartLine (src, start, end) {
@@ -63,42 +75,37 @@ module.exports = function calendarPlugin (md, options) {
       return false
     }
 
-    valid = isValidParams(src.substring(start + startMarkerStr.length, end))
-    if (!valid) {
-      return false
-    }
-    let params = src.substring(start + startMarkerStr.length, end).trim().match(PARAM_REGEX)
-
-    return {
-      year: parseInt(params[1]),
-      month: parseInt(params[2])
-    }
+    return parseParams(src.substring(start + startMarkerStr.length, end))
   }
 
   function parseEndLine (src, start, end) {
     return src.substring(start, end).trim() == endMarkerStr
   }
 
-  function parseDate (src, start, end, time) {
-    // extract a valid Date
+  // extract a valid Date
+  function parseDate (src, start, end, params) {
     let lineStr = src.substring(start, end).trim()
     try {
       let date = lineStr.match(DATE_REGEX)
-      let localTime = Object.assign({}, time)
+      let localTime = Object.assign({}, params)
       localTime['date'] = parseInt(date[1])
-      return isValidDate(localTime)
+      return {
+        title: date[3],
+        day: isValidDate(localTime)
+      }
     } catch (err) {
       return false
     }
     return false
   }
 
+  // extract a valid event
   function parseEvent (src, start, end) {
     let lineStr = src.substring(start, end).trim()
     try {
       let event = lineStr.match(EVENT_REGEX)
       return {
-        title: event[1],
+        tag: event[1],
         description: event[2]
       }
     } catch (err) {
@@ -107,6 +114,12 @@ module.exports = function calendarPlugin (md, options) {
     return false
   }
 
+  function pushEventContent (event, src, start, end) {
+    let lineStr = src.substring(start, end)
+    event.description += '\n' + lineStr
+  }
+
+  // add token helper
   function addToken (state, params) {
     let token = state.push(params.type, params.tag || 'div', params.nesting)
     token.markup = params.markup || ''
@@ -125,26 +138,29 @@ module.exports = function calendarPlugin (md, options) {
    * Rule function
    */
   function calendarRule (state, startLine, endLine, silent) {
-    let currentLine, currentDay,
+    let currentLine, currentDay, currentEvent,
       autoClosed = 0,
       token,
       start = state.bMarks[startLine] + state.tShift[startLine],
       end = state.eMarks[startLine],
       renderInfo = {
-        Date: {},
-        Content: {}
+        Year: -1,
+        Month: 0,
+        Days: {}
       }
 
     // check the first line is correct
-    let date = parseStartLine(state.src, start, end)
-    if (date === false) {
+    let params = parseStartLine(state.src, start, end)
+    if (!params) {
       return false
     }
     if (silent) {
       return true
     }
 
-    renderInfo['Date'] = date
+    renderInfo['Style'] = params.style
+    renderInfo['Year'] = params.year
+    renderInfo['Month'] = params.month
 
     // iterate the lines
     for (currentLine = startLine + 1; currentLine < endLine; ++currentLine) {
@@ -152,27 +168,34 @@ module.exports = function calendarPlugin (md, options) {
       end = state.eMarks[currentLine]
 
       // Meet day line
-      let day = parseDate(state.src, start, end, date)
-      if (day === 'Invalid') {
-        currentDay = undefined
-      } else if (day) {
-        currentDay = day
+      let dayInfo = parseDate(state.src, start, end, params)
+      if (dayInfo.day) {
+        currentEvent = undefined
+        currentDay = dayInfo.day
+        renderInfo['Days'][currentDay] = renderInfo['Days'][currentDay] || {}
+        renderInfo['Days'][currentDay]['title'] = dayInfo.title
         continue
-      } // ======================================================
+      }
 
       // Meet event line
       event = parseEvent(state.src, start, end)
       if (currentDay && event) {
-        renderInfo['Content'][currentDay] = renderInfo['Content'][currentDay] || []
-        renderInfo['Content'][currentDay].push(event)
+        currentEvent = event
+        renderInfo['Days'][currentDay]['events'] = renderInfo['Days'][currentDay]['events'] || []
+        renderInfo['Days'][currentDay]['events'].push(event)
         continue
-      } // ======================================================
+      }
 
       // Meet End of line
       if (state.src[start] === endMarkerStr[0] && parseEndLine(state.src, start, end)) {
         autoClosed = 1
         break
-      } // ======================================================
+      }
+
+      // Meet another words
+      if (currentEvent) {
+        pushEventContent(currentEvent, state.src, start, end)
+      }
     } // end for (iterate the lines)
 
     state.line = currentLine + autoClosed
@@ -190,7 +213,7 @@ module.exports = function calendarPlugin (md, options) {
   }
 
   md.block.ruler.before('fence', name, calendarRule, {
-    alt: ['paragraph', 'blockquote', 'list']
+    alt: ['paragraph', 'blockquote']
   })
   md.renderer.rules[name] = renderDefault
 }
