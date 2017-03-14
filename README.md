@@ -17,22 +17,17 @@
 
 
 
-#### TODO
-- Ouput “STRING”
-- Moudule
-- Npm package
-- mixed
-
-
 ## Get started
 
-#### required
-- node.js
+#### Install
 
+`npm install markdown-it-calendar --save`
 
-```shell=
-$ npm install
-$ gulp
+#### Usage
+
+```javascript
+md = require('markdown-it')
+md.use(require('markdown-it-calendar'))
 ```
 
 
