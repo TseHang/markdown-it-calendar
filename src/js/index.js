@@ -7,7 +7,7 @@ module.exports = function calendarPlugin (md, options) {
   let name = 'calendar',
     startMarkerStr = options.startMarker || `:::${name}`,
     endMarkerStr = options.endMarker || ':::',
-    PARAM_REGEX = options.PARAM_REGEX || /^(\((.*)\)){0,1}\s+(\d+)[ ]+(\d+)\s*$/,
+    PARAMS_REGEX = options.PARAMS_REGEX || /^(\((.*)\)){0,1}\s+(\d+)[ ]+(\d+)\s*$/,
     DATE_REGEX = options.DATE_REGEX || /^[+*-]\s+(\d{1,2})(\s(.*))?$/,
     EVENT_REGEX = options.EVENT_REGEX || /^[-*+]\s*\[(.*?)\]\s*(.*)$/
 
@@ -44,13 +44,10 @@ module.exports = function calendarPlugin (md, options) {
 
   // return true if params is valid
   function parseParams (params) {
-    // return earlier
-    if (params[0] != '(' && params[0] != ' ') {
-      return false
-    }
-    try {
-      params = params.match(PARAM_REGEX)
-      if (params) {
+    params = params.match(PARAMS_REGEX)
+
+    if (params) {
+      try {
         let style = params[2]
         let year = parseInt(params[3])
         let month = parseInt(params[4])
@@ -61,10 +58,12 @@ module.exports = function calendarPlugin (md, options) {
             month: month
           }
         }
+      } catch (e) {
+        console.error('PARAMS_REGEX is invalid')
+        return false
       }
-    } catch (e) {
-      return false
     }
+
     return false
   }
 
@@ -85,31 +84,38 @@ module.exports = function calendarPlugin (md, options) {
   // extract a valid Date
   function parseDate (src, start, end, params) {
     let lineStr = src.substring(start, end).trim()
-    try {
-      let date = lineStr.match(DATE_REGEX)
-      let localTime = Object.assign({}, params)
-      localTime['date'] = parseInt(date[1])
-      return {
-        title: date[3],
-        day: isValidDate(localTime)
+    let date = lineStr.match(DATE_REGEX)
+    if (date) {
+      try {
+        let localTime = Object.assign({}, params)
+        localTime['date'] = parseInt(date[1])
+        return {
+          title: date[3],
+          day: isValidDate(localTime)
+        }
+      } catch (err) {
+        console.error('DATE_REGEX is invalid')
+        return false
       }
-    } catch (err) {
-      return false
     }
+
     return false
   }
 
   // extract a valid event
   function parseEvent (src, start, end) {
     let lineStr = src.substring(start, end).trim()
-    try {
-      let event = lineStr.match(EVENT_REGEX)
-      return {
-        tag: event[1],
-        description: event[2]
+    let event = lineStr.match(EVENT_REGEX)
+    if (event) {
+      try {
+        return {
+          tag: event[1],
+          description: event[2]
+        }
+      } catch (err) {
+        console.error('EVENT_REGEX is invalid')
+        return false
       }
-    } catch (err) {
-      return false
     }
     return false
   }
@@ -171,16 +177,20 @@ module.exports = function calendarPlugin (md, options) {
       let dayInfo = parseDate(state.src, start, end, params)
       if (dayInfo.day) {
         currentEvent = undefined
+        // Assign current Day
         currentDay = dayInfo.day
         renderInfo['Days'][currentDay] = renderInfo['Days'][currentDay] || {}
         renderInfo['Days'][currentDay]['title'] = dayInfo.title
+        renderInfo['Days'][currentDay]['startLine'] = currentLine
         continue
       }
 
       // Meet event line
       event = parseEvent(state.src, start, end)
       if (currentDay && event) {
+        // Assign current event
         currentEvent = event
+        currentEvent['startLine'] = currentLine
         renderInfo['Days'][currentDay]['events'] = renderInfo['Days'][currentDay]['events'] || []
         renderInfo['Days'][currentDay]['events'].push(event)
         continue
@@ -200,6 +210,8 @@ module.exports = function calendarPlugin (md, options) {
 
     state.line = currentLine + autoClosed
     // add token(calendar_open) to [tokens ...]
+    renderInfo['startLine'] = startLine
+    renderInfo['endLine'] = endLine
     token = addToken(state, {
       type: name,
       nesting: 0,

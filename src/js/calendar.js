@@ -14,16 +14,18 @@ const months = [
   'December'
 ]
 
-// Transalate markdown syntax to HTML
-const md2HTML = (md, src) => {
-  // Filt the paragraph tokens
-  let tokens = md.parse(src, {}).filter((element) => {
-    return (element.type != 'paragraph_open') && (element.type != 'paragraph_close')
-  })
-  return md.renderer.render(tokens, {html: false})
-}
 
 const createCalendarHTML = (md, data) => {
+  // Transalate markdown syntax to HTML
+  const md2HTML = (src) => {
+    // Filt the paragraph tokens
+    let tokens = md.parse(src, {}).filter((element) => {
+      return (element.type != 'paragraph_open') && (element.type != 'paragraph_close')
+    })
+    console.log(tokens)    
+    return md.renderer.render(tokens, {html: false})
+  }
+
   const year = data.Year
   const month = data.Month
   const days = data.Days
@@ -32,6 +34,7 @@ const createCalendarHTML = (md, data) => {
   iterDate.setFullYear(year) // ensure every year can be used
   const daysNum = iterDate.getDate()
   iterDate.setDate(1)
+  console.log(data);
 
   const firstDay = iterDate.getDay()
   const calendar = document.createElement('table')
@@ -45,15 +48,15 @@ const createCalendarHTML = (md, data) => {
   tr = calendar.insertRow()
   tr.appendChild(th)
   th.colSpan = '7'
-  th.className = 'calendar-title'
-  th.innerHTML = months[parseInt(month) - 1] + '<span class="calendar-title-year"> ' + year + '</span>'
+  th.className = 'calendar-time'
+  th.innerHTML = months[parseInt(month) - 1] + '<span class="calendar-year"> ' + year + '</span>'
 
   // week name row
   tr = calendar.insertRow()
   for (let i = 0; i < 7; ++i) {
     td = tr.insertCell()
     td.innerHTML = weeks[i]
-    td.className = 'calendar-week'
+    td.className = 'calendar-week-name'
   }
 
   // blank days
@@ -73,11 +76,11 @@ const createCalendarHTML = (md, data) => {
       tr = calendar.insertRow()
     }
     td = tr.insertCell()
-    td.className = 'calendar-day'
+    td.className = 'calendar-cell'
     iterDate.setDate(today)
 
     cellContentDate.innerHTML = today
-    cellContentDate.className = 'calendar-date'
+    cellContentDate.className = 'calendar-cell-date'
     td.appendChild(cellContentDate)
 
     if (days[iterDate] !== undefined) {
@@ -89,17 +92,17 @@ const createCalendarHTML = (md, data) => {
       // Insert Titles
       if (days[iterDate].title !== undefined) {
         const cellContentTitle = document.createElement('div')
-        const dayOverviewTitleHTML = md2HTML(md, days[iterDate].title)
+        const dayOverviewTitleHTML = md2HTML(days[iterDate].title)
         const dayOverviewTitle = document.createElement('div')
 
         // insert cellContent Title
-        cellContentTitle.setAttribute('class', 'calendar-dayTitle calendar-content-title')
         cellContentTitle.innerHTML = `${dayOverviewTitleHTML}`
+        cellContentTitle.className = 'calendar-cell-title'
         td.appendChild(cellContentTitle)
 
         // insert dayOverview title
         dayOverviewTitle.innerHTML = dayOverviewTitleHTML
-        dayOverviewTitle.className = 'calendar-des-title'
+        dayOverviewTitle.className = 'calendar-overview-title'
         dayOverview.appendChild(dayOverviewTitle)
       }
 
@@ -108,33 +111,33 @@ const createCalendarHTML = (md, data) => {
           const cellContentTag = document.createElement('div')
           const dayOverviewEvent = document.createElement('div')
 
-          const tagHTML = md2HTML(md, e.tag)
-          const descriptionHTML = md2HTML(md, e.description)
+          const tagHTML = md2HTML(e.tag)
+          const descriptionHTML = md2HTML(e.description)
 
-          // Add event into cellContent
-          // This part has weird logic, but can work and I don't understand...
+          // Make hackmd parser work
           cellContentTag.innerHTML = tagHTML
+
+          // If no description, it won't have hover-div.
           if (e.description && e.description.length) {
-            cellContentTag.innerHTML += `<div class="calendar-tag-hover">${descriptionHTML}</div>`
+            cellContentTag.innerHTML += `<div class="calendar-content-tag-hover">${descriptionHTML}</div>`
           }
-          cellContentTag.className = 'calendar-tag'
+          cellContentTag.className = 'calendar-content-tag'
           cellContent.appendChild(cellContentTag)
 
           // Add event into dayOverview
           const dayOverviewTagHTML = (e.description && e.description.length) ? (tagHTML + ' : ') : tagHTML
-          dayOverviewEvent.innerHTML = `<span class="calendar-des-tag">${dayOverviewTagHTML} </span> ${descriptionHTML}`
+          dayOverviewEvent.innerHTML = `<span class="calendar-overview-tag">${dayOverviewTagHTML} </span> ${descriptionHTML}`
           dayOverview.appendChild(dayOverviewEvent)
         })
       }
 
       const dayOverviewDate = document.createElement('p')
       dayOverviewDate.innerHTML = `${year}.${month}.${today}`
-      dayOverviewDate.className = 'calendar-des-date'
+      dayOverviewDate.className = 'calendar-overview-date'
       dayOverview.appendChild(dayOverviewDate)
 
-      // why you always set className after setting innerHTML???
       cellContent.className = 'calendar-content'
-      dayOverview.className = 'calendar-description'
+      dayOverview.className = 'calendar-overview'
 
       td.appendChild(cellContent)
       td.appendChild(dayOverview)

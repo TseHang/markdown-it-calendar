@@ -27,24 +27,23 @@ $text-des-bold-color: map-get($color, green);
 $text-des-color: map-get($color, gray);
 
 @mixin color-layout($main-color, $calendar-title-color, $description-bg-color, $text-des-bold-color, $text-des-color) {
-  .calendar-week {
+  .calendar-week-name {
     background-color: $main-color;
   }
-  .calendar-content-title {
+  .calendar-cell-title {
     background-color: $calendar-title-color;
     color: $text-des-color;
   }
 
-  .calendar-tag {
+  .calendar-content-tag {
     &:before {
       background-color: $main-color;
     }
   }
-  .calendar-tag-hover {
+  .calendar-content-tag-hover {
     border: solid 1px $main-color;
   }
 }
-
 
 @mixin scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white, 50%)) {
   &::-webkit-scrollbar {
@@ -84,7 +83,7 @@ $text-des-color: map-get($color, gray);
     }
   }
   
-  .calendar-title {
+  .calendar-time {
     font-weight: bold;
     font-size: 1.4em;
     padding: .5em;
@@ -94,95 +93,13 @@ $text-des-color: map-get($color, gray);
     color: white;
   }
 
-  .calendar-title-year {
+  .calendar-year {
     font-weight: 100;
     margin-left: 2%;
     letter-spacing: 0px;
   }
 
-  .calendar-dayTitle {
-    &:hover{
-      cursor: default;
-      text-decoration: none;
-      ~ .calendar-description{
-        display: block !important;
-      }
-    }
-  }
-
-  .calendar-day{
-    &:hover{
-      background-color: #f5f5f5;
-    }
-
-    &:first-child > .calendar-description{
-      left: 0%;
-      transform: translate(3%, calc(-100% + 10px));
-
-      &:after {
-        left: 25%;
-        transform: translateX(3%);
-      }
-    }
-    &:last-child > .calendar-description{
-      left: -50%;
-      transform: translate(-3%, calc(-100% + 10px));
-
-      &:after {
-        left: 75%;
-        transform: translateX(-3%);
-      }
-    }
-
-    &:nth-child(5), &:nth-child(6), &:nth-child(7) {
-      .calendar-tag-hover {
-        left: 0%;
-        transform: translate(-95%, -50%);
-      }
-    }
-
-    &:first-child, &:last-child {
-      .calendar-tag-hover {
-        max-width: 4.5 * $td-max-width;
-      }
-    }
-
-    &:nth-child(2), &:nth-child(6) {
-      .calendar-tag-hover {
-        max-width: 3.5 * $td-max-width;
-      }
-    }
-
-    &:nth-child(3), &:nth-child(5) {
-      .calendar-tag-hover {
-        max-width: 3 * $td-max-width;
-      }
-    }
-
-    &:nth-child(4){
-      .calendar-tag-hover {
-        max-width: 2 * $td-max-width;
-      }
-    }
-  }
-
-  .calendar-week {
-    background-color: $main-color;
-    text-align: center;
-    color: white;
-  }
-
-  .calendar-date { 
-    position: relative;
-    left: -2px;
-    top: -4px;
-    margin-bottom: 0px;
-
-    font-size: $font-size-text;
-    font-weight: 200;
-  }
-
-  .calendar-content-title {
+  .calendar-cell-title {
     background-color: $calendar-title-color;
     text-align: center;
     font-size: $font-size-title;
@@ -193,9 +110,84 @@ $text-des-color: map-get($color, gray);
     overflow-x: auto;
     overflow-y: hidden;
     text-overflow: ellipsis;
+
+    &:hover, &:focus{
+      cursor: default;
+      text-decoration: none;
+      ~ .calendar-overview{
+        display: block !important;
+      }
+    }
   }
 
-  .calendar-tag {
+  .calendar-cell{
+    &:hover{
+      background-color: #f5f5f5;
+    }
+
+    &:nth-child(5), &:nth-child(6), &:nth-child(7) {
+
+      .calendar-overview {
+        left: 0%;
+        transform: translate(-95%, 10px);
+
+        &:after {
+          left: 100%;
+          border-width: 6px 8px;
+          border-color: transparent transparent transparent rgba(158,158,158,.8);
+          transform: translate(0% ,23px);
+        }
+      }
+
+      .calendar-content-tag-hover {
+        left: 0%;
+        transform: translate(-95%, -50%);
+      }
+    }
+
+    &:first-child, &:last-child {
+      .calendar-content-tag-hover {
+        max-width: 4.5 * $td-max-width;
+      }
+    }
+
+    &:nth-child(2), &:nth-child(6) {
+      .calendar-content-tag-hover {
+        max-width: 3.5 * $td-max-width;
+      }
+    }
+
+    &:nth-child(3), &:nth-child(5) {
+      .calendar-content-tag-hover {
+        max-width: 3 * $td-max-width;
+      }
+    }
+
+    &:nth-child(4){
+      .calendar-content-tag-hover {
+        max-width: 2.5 * $td-max-width;
+      }
+    }
+  }
+
+  .calendar-week-name {
+    background-color: $main-color;
+    text-align: center;
+    color: white;
+  }
+
+  .calendar-cell-date { 
+    position: relative;
+    left: -2px;
+    top: -4px;
+    margin-bottom: 0px;
+
+    font-size: $font-size-text;
+    font-weight: 200;
+  }
+
+
+  .calendar-content-tag {
     position: relative;
     color: $default-black;
     padding-left: 1em;
@@ -220,7 +212,9 @@ $text-des-color: map-get($color, gray);
     }
 
     &:hover {
-      .calendar-tag-hover {
+      color: $main-color;
+      .calendar-content-tag-hover {
+        color: $default-black;
         display: inline-block;
         white-space: nowrap;
         overflow: scroll;
@@ -228,7 +222,7 @@ $text-des-color: map-get($color, gray);
     }
   }
 
-  .calendar-tag-hover {
+  .calendar-content-tag-hover {
     @include scrollbars(.3em, rgba(94, 94, 94, 0.3), transparent);
 
     display: none;
@@ -251,17 +245,17 @@ $text-des-color: map-get($color, gray);
     font-size: $font-size-text;
   }
   
-  .calendar-description {
+  .calendar-overview {
     display: none;
     position: absolute;
     padding: .8em .5em .3em .3em;
     background-color: $description-bg-color;
     box-shadow: 0px 0px 10px -2px map-get($color, gray);
     color: $text-des-color;
-    top: 17px;
-    left: 50%;
+    top: 0px;
+    left: 100%;
     width: 150%;
-    transform: translate(-50%, calc(-100% + 10px));
+    transform: translate(-5%, 10px);
     z-index: 100;
 
     &:hover {
@@ -273,12 +267,13 @@ $text-des-color: map-get($color, gray);
       position: absolute;
       width: 0px;
       height: 0px;
-      border-width: 5px 8px 0px 8px;
+      left: 100%;
+      border-width: 6px 8px;
       border-style: solid;
-      border-color: rgba(158, 158, 158, 0.71) transparent transparent;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
+      border-color: transparent rgba(158,158,158,.8) transparent transparent;
+      top: 0%;
+      left: 0%;
+      transform: translate(-100%,23px)
     }
 
     p {
@@ -287,19 +282,19 @@ $text-des-color: map-get($color, gray);
       margin-bottom: .7em;
     }
 
-    .calendar-des-title {
+    .calendar-overview-title {
       font-size: 1em;
       padding-left: 0em;
       margin-bottom: 1em;
     }
 
-    .calendar-des-tag {
+    .calendar-overview-tag {
       font-weight: bold;
       font-size: $font-size-title + .1em;
       color: $text-des-bold-color;
     }
 
-    .calendar-des-date {
+    .calendar-overview-date {
       text-align: right;
       font-size: .7em;
       font-style: italic;
@@ -309,7 +304,7 @@ $text-des-color: map-get($color, gray);
     }
   }
 
-  .calendar-des-title {
+  .calendar-overview-title {
     text-align: center;
     letter-spacing: 4px;
     border-bottom: solid 1px;
@@ -318,20 +313,6 @@ $text-des-color: map-get($color, gray);
     width: 80%;
     transform: translateX(10%);
   }
-
-  .des-close {
-    display: none;
-    position: absolute;
-    color: $default-black;
-    top: 0px;
-    right: 10px;
-
-    &:hover, &:focus{
-      text-decoration: none;
-      color: $main-color;
-    }
-  }
-
 
   table tr{
     background-color: white !important;
@@ -369,7 +350,7 @@ $text-des-color: map-get($color, gray);
     tbody{
       border:solid 2px map-get($color, dark-blue) !important;
     }
-    .calendar-title{
+    .calendar-time{
       background-color: map-get($color, dark-blue);
     }
   }
