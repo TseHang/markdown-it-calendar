@@ -9,7 +9,7 @@ module.exports = function calendarPlugin (md, options) {
     endMarkerStr = options.endMarker || ':::',
     PARAM_REGEX = options.PARAM_REGEX || /^(\((.*)\)){0,1}\s+(\d+)[ ]+(\d+)\s*$/,
     DATE_REGEX = options.DATE_REGEX || /^[+*-]\s+(\d{1,2})(\s(.*))?$/,
-    EVENT_REGEX = options.EVENT_REGEX || /^[-*+]\s*\[(.*)\]\s*(.*)$/
+    EVENT_REGEX = options.EVENT_REGEX || /^[-*+]\s*\[(.*?)\]\s*(.*)$/
 
   let render = options.render || renderDefault
   /*************************************************************
