@@ -25,7 +25,7 @@ With this plugin you can create a calendar `<div>`  using markdown like:
 npm install markdown-it-calendar --save
 ```
 
-## Useage of Example
+## Use
 
 #### in script
 
@@ -55,7 +55,7 @@ md.use(require('markdown-it-calendar'))
 ```
 ##### **Support original markdown syntax in calendar.
 
-## Example
+## Syntax Example
 
 #### Basic syntax
 ```
@@ -109,12 +109,14 @@ md.use(require('markdown-it-calendar'), {
   startMarker: "any marker you want"
 })
 ```
+
 **Options**
-- **startMarker** (default = `:::`)
+- **startMarker** (default = `:::calendar`)
 - **endMarker** (default = `:::`)
-- **PARAM_REGEX** (set regex for **` Year Month`** )
-- **DATE_REGEX** (set regex for **`- Date DayTitle`**)
-- **EVENT_REGEX** (set regex for **`- [EventTitle1] Description1`**)
+- **PARAMS_REGEX** (set regex for **` Year Month`** , default = `/^(\((.*)\)){0,1}\s+(\d+)[ ]+(\d+)\s*$/`)
+- **DATE_REGEX** (set regex for **`- Date DayTitle`**, default = `/^[+*-]\s+(\d{1,2})(\s(.*))?$/`)
+- **EVENT_REGEX** (set regex for **`- [EventTitle1] Description1`**, default = `/^[-*+]\s*\[(.*?)\]\s*(.*)$/`)
+
 
 
 ## License

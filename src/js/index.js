@@ -211,7 +211,7 @@ module.exports = function calendarPlugin (md, options) {
     state.line = currentLine + autoClosed
     // add token(calendar_open) to [tokens ...]
     renderInfo['startLine'] = startLine
-    renderInfo['endLine'] = endLine
+    renderInfo['endLine'] = currentLine
     token = addToken(state, {
       type: name,
       nesting: 0,

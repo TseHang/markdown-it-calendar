@@ -14,15 +14,21 @@ const months = [
   'December'
 ]
 
-
 const createCalendarHTML = (md, data) => {
   // Transalate markdown syntax to HTML
-  const md2HTML = (src) => {
+  const md2HTML = (src, startLine) => {
     // Filt the paragraph tokens
     let tokens = md.parse(src, {}).filter((element) => {
       return (element.type != 'paragraph_open') && (element.type != 'paragraph_close')
     })
-    console.log(tokens)    
+    // remap tokens
+    tokens = tokens.map((token)=>{
+      if (token.map){
+        token.map[0] += startLine
+        token.map[1] += startLine
+      }
+      return token
+    })
     return md.renderer.render(tokens, {html: false})
   }
 
@@ -34,7 +40,6 @@ const createCalendarHTML = (md, data) => {
   iterDate.setFullYear(year) // ensure every year can be used
   const daysNum = iterDate.getDate()
   iterDate.setDate(1)
-  console.log(data);
 
   const firstDay = iterDate.getDay()
   const calendar = document.createElement('table')
@@ -92,7 +97,7 @@ const createCalendarHTML = (md, data) => {
       // Insert Titles
       if (days[iterDate].title !== undefined) {
         const cellContentTitle = document.createElement('div')
-        const dayOverviewTitleHTML = md2HTML(days[iterDate].title)
+        const dayOverviewTitleHTML = md2HTML(days[iterDate].title, days[iterDate].startLine)
         const dayOverviewTitle = document.createElement('div')
 
         // insert cellContent Title
@@ -111,8 +116,8 @@ const createCalendarHTML = (md, data) => {
           const cellContentTag = document.createElement('div')
           const dayOverviewEvent = document.createElement('div')
 
-          const tagHTML = md2HTML(e.tag)
-          const descriptionHTML = md2HTML(e.description)
+          const tagHTML = md2HTML(e.tag, e.startLine)
+          const descriptionHTML = md2HTML(e.description, e.startLine)
 
           // Make hackmd parser work
           cellContentTag.innerHTML = tagHTML
