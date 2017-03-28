@@ -2,12 +2,12 @@
 @import "compass/utilities";
 
 /* 
- * Definition
+ * Definition && Variables
  */
 $color: (
   default-black: #333,
   gray: #7d7d7d,
-  pink: rgb(237, 172, 172),
+  pink: #e6a6ad,
   water-blue: aliceblue,
   dark-blue: #2c3460,
   green: cadetblue,
@@ -21,29 +21,39 @@ $font-size-text: .8em;
 $td-max-width: 5em;
 
 $main-color: map-get($color, pink);
-$calendar-title-color: map-get($color, water-blue);
-$description-bg-color: map-get($color, yellow);
-$text-des-bold-color: map-get($color, green);
-$text-des-color: map-get($color, gray);
+$calendar-cell-title-color: map-get($color, water-blue);
+$overview-bg-color: map-get($color, yellow);
+$text-overview-bold-color: map-get($color, green);
+$text-overview-color: map-get($color, gray);
 
-@mixin color-layout($main-color, $calendar-title-color, $description-bg-color, $text-des-bold-color, $text-des-color) {
+/*  
+ * Component
+ *  - Color-template
+ *  - scrollbars-style
+ */
+@mixin color-template($main-color, $calendar-cell-title-color, $overview-bg-color, $text-overview-bold-color, $text-overview-color) {
   .calendar-week-name {
     background-color: $main-color;
   }
   .calendar-cell-title {
-    background-color: $calendar-title-color;
-    color: $text-des-color;
+    background-color: $calendar-cell-title-color;
+    color: $text-overview-color;
   }
 
   .calendar-content-tag {
     &:before {
       background-color: $main-color;
     }
+
+    &:hover {
+      color: $main-color;
+    }
   }
   .calendar-content-tag-hover {
     border: solid 1px $main-color;
   }
 }
+
 
 @mixin scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white, 50%)) {
   &::-webkit-scrollbar {
@@ -69,9 +79,38 @@ $text-des-color: map-get($color, gray);
 }
 
 /* 
- * maekdown-it-calendar
+ * Markdown-it-calendar 
  */
 .markdown-it-calendar {
+
+  // Reset table style
+  table {
+    tbody {
+      border: solid 2px rgba(204, 204, 204, 0.3) !important;
+    }
+
+    th {
+      border-bottom: none;
+    }
+
+    td {
+      border: none;
+      position: relative;
+    }
+
+    tr {
+      &:nth-child(2n) {
+        background-color: white;
+      }
+      &:first-child {
+        border-bottom: none;
+      }
+      &:nth-child(2) {
+        border-top: none;
+      }
+    }
+  }
+
   > .calendar {
     display: table;
 
@@ -82,7 +121,7 @@ $text-des-color: map-get($color, gray);
       }
     }
   }
-  
+
   .calendar-time {
     font-weight: bold;
     font-size: 1.4em;
@@ -100,11 +139,11 @@ $text-des-color: map-get($color, gray);
   }
 
   .calendar-cell-title {
-    background-color: $calendar-title-color;
+    background-color: $calendar-cell-title-color;
     text-align: center;
     font-size: $font-size-title;
     padding: 3px;
-    color: $text-des-color;
+    color: $text-overview-color;
 
     word-wrap: normal;
     overflow-x: auto;
@@ -142,6 +181,7 @@ $text-des-color: map-get($color, gray);
       .calendar-content-tag-hover {
         left: 0%;
         transform: translate(-95%, -50%);
+        box-shadow: -1px 0px 1px 0px rgba(51, 51, 51, .3);
       }
     }
 
@@ -234,9 +274,10 @@ $text-des-color: map-get($color, gray);
     top: 50%;
     transform: translate(0%,-50%);
     z-index: 90;
+    box-shadow: 1px 0px 1px 0px rgba(51, 51, 51, .3);
 
     > span {
-      color: $text-des-bold-color;
+      color: $text-overview-bold-color;
       font-weight: bold;
     }
   }
@@ -249,9 +290,9 @@ $text-des-color: map-get($color, gray);
     display: none;
     position: absolute;
     padding: .8em .5em .3em .3em;
-    background-color: $description-bg-color;
+    background-color: $overview-bg-color;
     box-shadow: 0px 0px 10px -2px map-get($color, gray);
-    color: $text-des-color;
+    color: $text-overview-color;
     top: 0px;
     left: 100%;
     width: 150%;
@@ -291,7 +332,7 @@ $text-des-color: map-get($color, gray);
     .calendar-overview-tag {
       font-weight: bold;
       font-size: $font-size-title + .1em;
-      color: $text-des-bold-color;
+      color: $text-overview-bold-color;
     }
 
     .calendar-overview-date {
@@ -314,44 +355,25 @@ $text-des-color: map-get($color, gray);
     transform: translateX(10%);
   }
 
-  table tr{
-    background-color: white !important;
-  }
-
-  table th {
-    border-bottom: none;
-  }
-
-  table tr {
-    &:first-child {
-      border-bottom: none;
-    }
-    &:nth-child(2) {
-      border-top: none;
-    }
-  }
-
-  table td {
-    border: none;
-    position: relative;
-  }
-
-  tbody {
-    border: solid 2px rgba(204, 204, 204, 0.3) !important;
-  }
-  
+  // Color-template(dark) style
   &.dark {
     $main-color: map-get($color, default-black);
-    $calendar-title-color: map-get($color, light-gray);
-    $text-des-color: white;
+    $calendar-cell-title-color: map-get($color, light-gray);
+    $text-overview-color: white;
 
-    @include color-layout($main-color, $calendar-title-color, $description-bg-color, $text-des-bold-color, $text-des-color);
+    @include color-template($main-color, $calendar-cell-title-color, $overview-bg-color, $text-overview-bold-color, $text-overview-color);
 
     tbody{
       border:solid 2px map-get($color, dark-blue) !important;
     }
     .calendar-time{
       background-color: map-get($color, dark-blue);
+    }
+
+    .calendar-content-tag {
+      &:hover {
+        color: map-get($color, light-gray);
+      }
     }
   }
 }
