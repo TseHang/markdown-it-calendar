@@ -5,8 +5,12 @@
   "repository": "https://github.com/TseHang/Markdown-it-calendar.git",
   "author": "Donbadar TseHang ",
   "license": "MIT",
+  "scripts": {
+    "test": "node --use_strict tester.js"
+  },
   "devDependencies": {
     "babel-preset-es2015": "^6.22.0",
+    "babel-runtime": "^6.23.0",
     "eslint": "^3.16.1",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-import": "^2.2.0",
@@ -15,6 +19,9 @@
     "gulp-clean-css": "^3.0.3",
     "gulp-compass": "^2.1.0",
     "gulp-minify-css": "^1.2.4",
-    "gulp-uglify": "^2.1.0"
+    "gulp-uglify": "^2.1.0",
+    "jsdom": "^9.12.0",
+    "jsdom-global": "^2.1.1",
+    "markdown-it": "^8.3.1"
   }
 }
