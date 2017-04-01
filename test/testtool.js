@@ -142,7 +142,7 @@ function CalendarDay (html) {
   eventCont = eventCont[0]
   var that = this
   applySelectorAll(eventCont, '.' + classNameEvent).forEach(function (v) {
-    var ev = CalendarEvent(v)
+    var ev = new CalendarEvent(v)
     if (ev.parseSuccessful) {
       that.events = that.events.concat(ev)
     } else {
@@ -161,6 +161,8 @@ function CalendarCalendar (html) {
     parseSuccessful(Boolean)
     function day( date(Number) ):return CalendarDay for date
       for example, day(4) returns days[3]
+
+  html should contain exactly one Calendar
 */
   if (!this || !this.constructor || this.constructor !== CalendarCalendar) {
     return new CalendarCalendar(html)
@@ -186,7 +188,7 @@ function CalendarCalendar (html) {
   var that = this
 
   applySelectorAll(calendarTable, '.' + classNameDay).forEach(function (v) {
-    var tmpday = CalendarDay(v)
+    var tmpday = new CalendarDay(v)
     that.days = that.days.concat(tmpday)
     ++that.daysCount
   })
@@ -199,6 +201,10 @@ CalendarCalendar.prototype.day = function (n) {
 }
 
 function getCalendars (renderResult) {
+/*
+  parse renderResult into CalendarCalendar(s)
+  note that the return value is an Array
+*/
   var calsArr = applySelectorAll(renderResult, '.' + classNameCalendar)
   var rtn = []
   calsArr.forEach(function (v) {
