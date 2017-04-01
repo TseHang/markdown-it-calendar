@@ -2,7 +2,7 @@ var testtool = require('./testtool')
 
 var fs = require('fs');
 
-var md = require('markdown-it')().use(require('./index'));
+var md = require('markdown-it')().use(require('../index'));
 
 var filename = 'tests.txt';
 
@@ -11,7 +11,7 @@ var filename = 'tests.txt';
 
 
 
-var fileContent =  fs.readFileSync(filename,{encoding:'utf8'});
+var fileContent =  fs.readFileSync("./test/"+filename,{encoding:'utf8'});
 var rendered = md.render(fileContent);
 
 console.log('render content:');
