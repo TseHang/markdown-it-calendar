@@ -18,9 +18,9 @@ console.log('calendars in rendered:')
 console.log(cals.length)
 
 console.log('days in first calendar:')
-console.log(cals[0].days_count)
+console.log(cals[0].daysCount)
 console.log('events on 4th:')
-console.log(cals[0].day(4).events_count)
+console.log(cals[0].day(4).eventsCount)
 cals[0].day(4).events.forEach(function (v) {
   console.log('event_title:')
   console.log(v.title)
