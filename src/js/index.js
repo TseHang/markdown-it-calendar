@@ -186,7 +186,7 @@ module.exports = function calendarPlugin (md, options) {
       }
 
       // Meet event line
-      event = parseEvent(state.src, start, end)
+      let event = parseEvent(state.src, start, end)
       if (currentDay && event) {
         // Assign current event
         currentEvent = event
