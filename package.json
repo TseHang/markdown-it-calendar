@@ -6,7 +6,11 @@
   "author": "Donbadar TseHang ",
   "license": "MIT",
   "scripts": {
-    "test": "node --use_strict test/tester.js"
+    "ntest": "type node > /dev/null && node --use_strict test/tester.js",
+    "lmtest": "[ -f node_modules/mocha/index.js ] && node_modules/mocha/index.js --use_strict test/tester.js",
+    "gmtest": "type mocha > /dev/null && mocha --use_strict test/tester.js",
+    "mtest": "npm -s run lmtest || npm -s run gmtest",
+    "test": "npm -s run mtest || npm -s run ntest"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.22.0",
